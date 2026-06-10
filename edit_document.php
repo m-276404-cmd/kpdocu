@@ -1,0 +1,1 @@
+<?php include 'new_document.php'; ?>

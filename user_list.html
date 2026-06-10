@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+  <title>UNIKL MIIT - Paparan Pengguna (Popup View)</title>
+  <!-- Google Fonts + Font Awesome -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,300;14..32,400;14..32,500;14..32,600;14..32,700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #eef2f8;
+      color: #0f172a;
+    }
+
+    /* MAIN LAYOUT: SAMADA DENGAN SISTEM SEDIA ADA (Sidebar + Main Content) */
+    .app-container {
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* ========= SIDEBAR (seperti mockup) ========= */
+    .sidebar {
+      width: 280px;
+      background: linear-gradient(180deg, #0c2e3e 0%, #071a24 100%);
+      color: #e0edf5;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      box-shadow: 2px 0 12px rgba(0,0,0,0.06);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .sidebar-header {
+      padding: 28px 22px 20px 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .sidebar-header h3 {
+      font-weight: 600;
+      font-size: 1.35rem;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: white;
+      letter-spacing: -0.2px;
+    }
+
+    .sidebar-header h3 i {
+      font-size: 1.6rem;
+      color: #3b9bd5;
+    }
+
+    .admin-profile {
+      background: rgba(59, 155, 213, 0.18);
+      border-radius: 42px;
+      padding: 10px 14px;
+      margin-top: 22px;
+      font-size: 0.85rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .admin-profile span:first-child {
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .admin-profile span:last-child {
+      font-family: monospace;
+      font-size: 0.75rem;
+      background: #0b2b38;
+      padding: 4px 8px;
+      border-radius: 40px;
+    }
+
+    /* navigation */
+    .nav-menu {
+      flex: 1;
+      padding: 28px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 12px 18px;
+      border-radius: 14px;
+      font-weight: 500;
+      transition: 0.2s;
+      color: #cbdde9;
+      cursor: pointer;
+    }
+
+    .nav-item i {
+      width: 24px;
+      font-size: 1.2rem;
+    }
+
+    .nav-item.active {
+      background: #1e556e;
+      color: white;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+    }
+
+    .nav-item:not(.active):hover {
+      background: #1f4257;
+      color: #f1f9ff;
+    }
+
+    /* MAIN PANEL */
+    .main-panel {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow-x: auto;
+    }
+
+    /* top bar */
+    .top-navbar {
+      background: white;
+      padding: 14px 32px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #e2edf7;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .page-info h2 {
+      font-size: 1.6rem;
+      font-weight: 600;
+      color: #144d66;
+    }
+
+    .page-info p {
+      font-size: 0.85rem;
+      color: #4b6a7c;
+      margin-top: 4px;
+    }
+
+    .search-wrapper {
+      background: #f9fbfe;
+      border: 1px solid #dee6ef;
+      border-radius: 40px;
+      padding: 8px 20px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .search-wrapper i {
+      color: #7f99b0;
+    }
+
+    .search-wrapper input {
+      border: none;
+      background: transparent;
+      width: 220px;
+      font-size: 0.9rem;
+      outline: none;
+    }
+
+    /* TABLE CARD */
+    .card-table {
+      background: white;
+      margin: 28px 32px;
+      border-radius: 28px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.02), 0 2px 6px rgba(0, 0, 0, 0.03);
+      border: 1px solid #e9f0f5;
+      overflow-x: auto;
+    }
+
+    .user-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.9rem;
+    }
+
+    .user-table th {
+      text-align: left;
+      padding: 18px 20px;
+      background: #fbfdff;
+      border-bottom: 1px solid #eaf0f6;
+      font-weight: 600;
+      color: #1c3b4f;
+    }
+
+    .user-table td {
+      padding: 14px 20px;
+      border-bottom: 1px solid #f0f5fa;
+      vertical-align: middle;
+    }
+
+    .user-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .badge-type {
+      background: #e1f0fa;
+      color: #136b9c;
+      padding: 5px 14px;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-block;
+    }
+
+    .action-icons {
+      display: flex;
+      gap: 12px;
+    }
+
+    .btn-view {
+      background: none;
+      border: none;
+      font-size: 1.1rem;
+      cursor: pointer;
+      color: #2a7f6e;
+      transition: 0.2s;
+      padding: 6px 10px;
+      border-radius: 30px;
+    }
+
+    .btn-view:hover {
+      background: #ebf8f5;
+      color: #0e6b5c;
+      transform: scale(1.03);
+    }
+
+    /* footer table (pagination) */
+    .table-footer {
+      padding: 16px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-top: 1px solid #ecf3f9;
+      background: white;
+      flex-wrap: wrap;
+    }
+
+    .pagination-controls {
+      display: flex;
+      gap: 12px;
+    }
+
+    .pagination-controls button, .modal-close-btn {
+      background: white;
+      border: 1px solid #cad9e8;
+      padding: 8px 20px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .pagination-controls button:hover {
+      background: #f0f6fc;
+      border-color: #9cb7cf;
+    }
+
+    /* FOOTER GLOBAL */
+    .global-footer {
+      text-align: center;
+      padding: 18px 24px;
+      font-size: 0.75rem;
+      color: #56738b;
+      border-top: 1px solid #e0ecf5;
+      background: white;
+      margin-top: auto;
+    }
+
+    /* MODAL POPUP - disesuaikan dengan gaya sistem sedia ada (rounded, subtle shadow, layout clean) */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.55);
+      backdrop-filter: blur(4px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2000;
+      visibility: hidden;
+      opacity: 0;
+      transition: visibility 0.2s, opacity 0.2s ease;
+    }
+
+    .modal-overlay.active {
+      visibility: visible;
+      opacity: 1;
+    }
+
+    .modal-wrapper {
+      background: #ffffff;
+      width: 540px;
+      max-width: 90vw;
+      border-radius: 32px;
+      box-shadow: 0 25px 40px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      animation: slideFade 0.25s cubic-bezier(0.2, 0.9, 0.4, 1.1);
+    }
+
+    @keyframes slideFade {
+      0% {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .modal-header {
+      background: #fafdff;
+      padding: 22px 28px 12px 28px;
+      border-bottom: 1px solid #eef3fc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      font-size: 1.55rem;
+      font-weight: 600;
+      color: #144d66;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .modal-header h3 i {
+      color: #3980a7;
+      font-size: 1.5rem;
+    }
+
+    .modal-close-icon {
+      background: transparent;
+      border: none;
+      font-size: 1.8rem;
+      cursor: pointer;
+      color: #8aaec2;
+      transition: 0.2s;
+      line-height: 1;
+    }
+
+    .modal-close-icon:hover {
+      color: #cf3c2e;
+    }
+
+    .modal-body {
+      padding: 28px 32px;
+    }
+
+    .detail-row {
+      display: flex;
+      margin-bottom: 24px;
+      border-bottom: 1px solid #f0f4fa;
+      padding-bottom: 14px;
+    }
+
+    .detail-label {
+      width: 120px;
+      font-weight: 600;
+      color: #2c5a74;
+      font-size: 0.9rem;
+    }
+
+    .detail-value {
+      flex: 1;
+      color: #1e2f3c;
+      font-weight: 500;
+      word-break: break-word;
+    }
+
+    .detail-value.email {
+      color: #1d6f9c;
+      word-break: break-all;
+    }
+
+    .type-indicator {
+      background: #e2f0f9;
+      padding: 5px 14px;
+      border-radius: 40px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      display: inline-block;
+      color: #136b9c;
+    }
+
+    .modal-footer {
+      background: #fbfeff;
+      padding: 18px 28px;
+      display: flex;
+      justify-content: flex-end;
+      border-top: 1px solid #ecf3fc;
+      gap: 12px;
+    }
+
+    .btn-primary-modal {
+      background: #144d66;
+      border: none;
+      color: white;
+      padding: 10px 24px;
+      border-radius: 40px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+
+    .btn-primary-modal:hover {
+      background: #1f6a8c;
+    }
+
+    @media (max-width: 760px) {
+      .sidebar {
+        width: 80px;
+        min-width: 80px;
+      }
+      .sidebar-header h3 span, .admin-profile span:first-child, .nav-item span:not(i) {
+        display: none;
+      }
+      .nav-item i {
+        margin: 0 auto;
+      }
+      .nav-item {
+        justify-content: center;
+      }
+      .card-table {
+        margin: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container">
+  <!-- SIDEBAR (mengikut sistem sedia ada) -->
+  <aside class="sidebar">
+    <div class="sidebar-header">
+      <h3><i class="fas fa-university"></i> <span>UNIKL MIIT</span></h3>
+      <div class="admin-profile">
+        <span><i class="fas fa-user-cog"></i> Admin 1</span>
+        <span>admin@admin.com</span>
+      </div>
+    </div>
+    <div class="nav-menu">
+      <div class="nav-item active"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></div>
+      <div class="nav-item"><i class="fas fa-users"></i> <span>Users</span></div>
+      <div class="nav-item"><i class="fas fa-user-plus"></i> <span>Add New</span></div>
+      <div class="nav-item"><i class="fas fa-list-ul"></i> <span>List</span></div>
+      <div class="nav-item"><i class="fas fa-folder-open"></i> <span>Documents</span></div>
+    </div>
+  </aside>
+
+  <!-- KANDUNGAN UTAMA -->
+  <div class="main-panel">
+    <div class="top-navbar">
+      <div class="page-info">
+        <h2>Senarai Pengguna</h2>
+        <p>Urus & lihat butiran pengguna sistem</p>
+      </div>
+      <div class="search-wrapper">
+        <i class="fas fa-search"></i>
+        <input type="text" id="carianInput" placeholder="Cari nama, email..." autocomplete="off">
+      </div>
+    </div>
+
+    <div class="card-table">
+      <table class="user-table">
+        <thead>
+          <tr>
+            <th>#</th><th>Nama</th><th>Alamat</th><th>Jenis Pengguna</th><th>Email</th><th>Tindakan</th>
+          </tr>
+        </thead>
+        <tbody id="jadualBody">
+          <!-- data dipapar secara dinamik -->
+        </tbody>
+      </table>
+      <div class="table-footer">
+        <div class="info-pagination" id="infoPagination">Menunjukkan 1 hingga 5 daripada 5 entri</div>
+        <div class="pagination-controls">
+          <button id="btnPrev"><i class="fas fa-chevron-left"></i> Sebelum</button>
+          <button id="btnNext">Seterusnya <i class="fas fa-chevron-right"></i></button>
+        </div>
+      </div>
+    </div>
+    <footer class="global-footer">
+      Hak Cipta 2025 @ UNIKL MIIT. Hak cipta terpelihara.
+    </footer>
+  </div>
+</div>
+
+<!-- MODAL POPUP (View User) - DISESUAIKAN DENGAN REKA BENTUK SISTEM SEDIA ADA -->
+<div id="popupViewModal" class="modal-overlay">
+  <div class="modal-wrapper">
+    <div class="modal-header">
+      <h3><i class="fas fa-id-card"></i> Profil Pengguna</h3>
+      <button class="modal-close-icon" id="tutupModalIcon">&times;</button>
+    </div>
+    <div class="modal-body" id="modalBodyContent">
+      <div class="detail-row">
+        <div class="detail-label">Nama Penuh:</div>
+        <div class="detail-value" id="modalNama">-</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Alamat E-mel:</div>
+        <div class="detail-value email" id="modalEmail">-</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Alamat Rumah/Pejabat:</div>
+        <div class="detail-value" id="modalAlamat">-</div>
+      </div>
+      <div class="detail-row">
+        <div class="detail-label">Jenis Pengguna:</div>
+        <div class="detail-value" id="modalJenis">-</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn-primary-modal" id="tutupModalFooterBtn">Tutup</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Data berdasarkan mockup yang diberikan: Admin 1, Encik Ki (2 entries), Nurul Jiha, Nurul Nabila
+  // Disesuaikan dengan maklumat asal tetapi dengan alamat & jenis yang realistik mengikut gaya.
+  const usersOriginal = [
+    { id: 1, name: "Admin 1", address: "Aras 2, Menara MIIT, KL", userType: "Pentadbir Sistem", email: "admin@admin.com" },
+    { id: 2, name: "Encik Ki", address: "No 12, Jalan Teknologi, Cyberjaya", userType: "Pengurus Kanan", email: "encik.ki@unikl.edu.my" },
+    { id: 3, name: "Encik Ki", address: "Pejabat Cawangan, Seksyen 14, Shah Alam", userType: "Penyelia", email: "ki.abdullah@miit.edu.my" },
+    { id: 4, name: "Nurul Jiha", address: "000", userType: "Employees", email: "123@gmail.com" },
+    { id: 5, name: "Nurul Nabila", address: "000", userType: "Employees", email: "nabila.huszaidi@s.unikl.edu.my" }
+  ];
+
+  let dataTerkini = [...usersOriginal];
+  let halamanSemasa = 1;
+  const barisPerHalaman = 5;
+
+  // Elemen DOM
+  const tbody = document.getElementById('jadualBody');
+  const infoSpan = document.getElementById('infoPagination');
+  const prevBtn = document.getElementById('btnPrev');
+  const nextBtn = document.getElementById('btnNext');
+  const carianInput = document.getElementById('carianInput');
+  
+  // Modal elements
+  const modalOverlay = document.getElementById('popupViewModal');
+  const closeIcon = document.getElementById('tutupModalIcon');
+  const closeFooter = document.getElementById('tutupModalFooterBtn');
+  const modalNama = document.getElementById('modalNama');
+  const modalEmail = document.getElementById('modalEmail');
+  const modalAlamat = document.getElementById('modalAlamat');
+  const modalJenis = document.getElementById('modalJenis');
+
+  // Helper: escape html
+  function escapeHtml(str) {
+    if (!str) return '';
+    return str.replace(/[&<>]/g, function(m) {
+      if (m === '&') return '&amp;';
+      if (m === '<') return '&lt;';
+      if (m === '>') return '&gt;';
+      return m;
+    });
+  }
+
+  // Render jadual berdasarkan dataTerkini & halamanSemasa
+  function renderTable() {
+    const mula = (halamanSemasa - 1) * barisPerHalaman;
+    const tamat = mula + barisPerHalaman;
+    const dataHalaman = dataTerkini.slice(mula, tamat);
+    
+    if (dataHalaman.length === 0 && dataTerkini.length > 0 && halamanSemasa > 1) {
+      halamanSemasa = Math.ceil(dataTerkini.length / barisPerHalaman);
+      renderTable();
+      return;
+    }
+    
+    tbody.innerHTML = '';
+    if (dataTerkini.length === 0) {
+      const kosongRow = document.createElement('tr');
+      kosongRow.innerHTML = `<td colspan="6" style="text-align:center; padding:40px;">Tiada rekod pengguna ditemui</td>`;
+      tbody.appendChild(kosongRow);
+      infoSpan.innerText = `Menunjukkan 0 hingga 0 daripada 0 entri`;
+      prevBtn.disabled = true;
+      nextBtn.disabled = true;
+      return;
+    }
+    
+    for (let i = 0; i < dataHalaman.length; i++) {
+      const user = dataHalaman[i];
+      const indeksGlobal = mula + i + 1;
+      const baris = document.createElement('tr');
+      baris.innerHTML = `
+        <td>${indeksGlobal}</td>
+        <td>${escapeHtml(user.name)}</td>
+        <td>${escapeHtml(user.address)}</td>
+        <td><span class="badge-type">${escapeHtml(user.userType)}</span></td>
+        <td>${escapeHtml(user.email)}</td>
+        <td class="action-icons">
+          <button class="btn-view" data-id="${user.id}" title="Papar butiran pengguna"><i class="fas fa-eye"></i> Lihat</button>
+        </td>
+      `;
+      tbody.appendChild(baris);
+    }
+    
+    // Bind view button events
+    document.querySelectorAll('.btn-view').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const userId = parseInt(btn.getAttribute('data-id'));
+        const pengguna = dataTerkini.find(u => u.id === userId);
+        if (pengguna) bukaModalPopup(pengguna);
+      });
+    });
+    
+    const totalData = dataTerkini.length;
+    const dari = totalData === 0 ? 0 : mula + 1;
+    const sehingga = Math.min(tamat, totalData);
+    infoSpan.innerText = `Menunjukkan ${dari} hingga ${sehingga} daripada ${totalData} entri`;
+    prevBtn.disabled = (halamanSemasa === 1);
+    nextBtn.disabled = (tamat >= totalData);
+  }
+
+  // Fungsi carian
+  function laksanakanCarian() {
+    const query = carianInput.value.trim().toLowerCase();
+    if (query === "") {
+      dataTerkini = [...usersOriginal];
+    } else {
+      dataTerkini = usersOriginal.filter(user =>
+        user.name.toLowerCase().includes(query) ||
+        user.email.toLowerCase().includes(query) ||
+        user.userType.toLowerCase().includes(query) ||
+        user.address.toLowerCase().includes(query)
+      );
+    }
+    halamanSemasa = 1;
+    renderTable();
+  }
+  
+  // Fungsi popup view - disesuaikan dengan layout sistem sedia ada
+  function bukaModalPopup(user) {
+    // isi data dengan kemas
+    modalNama.innerText = user.name || 'Tiada nama';
+    modalEmail.innerText = user.email || 'Tiada e-mel';
+    modalAlamat.innerText = (user.address && user.address !== "") ? user.address : 'Tiada alamat direkodkan';
+    // Untuk jenis pengguna, gunakan badge supaya konsisten
+    modalJenis.innerHTML = `<span class="type-indicator">${escapeHtml(user.userType)}</span>`;
+    // paparkan modal
+    modalOverlay.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  }
+  
+  function tutupModal() {
+    modalOverlay.classList.remove('active');
+    document.body.style.overflow = '';
+  }
+  
+  // Pagination handlers
+  function prevPage() {
+    if (halamanSemasa > 1) {
+      halamanSemasa--;
+      renderTable();
+    }
+  }
+  function nextPage() {
+    const maxPage = Math.ceil(dataTerkini.length / barisPerHalaman);
+    if (halamanSemasa < maxPage) {
+      halamanSemasa++;
+      renderTable();
+    }
+  }
+  
+  // Inisialisasi & event listeners
+  function init() {
+    renderTable();
+    carianInput.addEventListener('input', laksanakanCarian);
+    prevBtn.addEventListener('click', prevPage);
+    nextBtn.addEventListener('click', nextPage);
+    
+    // Modal close events
+    closeIcon.addEventListener('click', tutupModal);
+    closeFooter.addEventListener('click', tutupModal);
+    modalOverlay.addEventListener('click', (e) => {
+      if (e.target === modalOverlay) tutupModal();
+    });
+    // Keyboard escape
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && modalOverlay.classList.contains('active')) {
+        tutupModal();
+      }
+    });
+  }
+  
+  init();
+</script>
+</body>
+</html>
